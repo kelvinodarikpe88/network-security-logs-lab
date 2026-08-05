@@ -1,0 +1,15 @@
+// METADATA-START
+// id: SOC-DET-010 | mitre: T1078, T1110 | nist: DE.CM-7 | iso27001: A.8.16
+// soc2: CC7.2 | severity: high | data_source: VPN (CommonSecurityLog)
+// METADATA-END
+CommonSecurityLog
+| where DeviceProduct == "PAN-OS" or DeviceEventClassID has "globalprotect"
+| where Activity == "globalprotect-login-success"
+| extend User = coalesce(SourceUserID, SourceUserName, "unknown")
+| summarize FirstLogin = min(TimeGenerated), LastLogin = max(TimeGenerated),
+            IPs = dcount(SourceIP), Countries = dcount_if(DeviceCountry, isnotempty(DeviceCountry))
+    by User
+| where IPs > 3 or Countries > 2
+| extend TimeWindowMinutes = datetime_diff("minute", LastLogin, FirstLogin)
+| where TimeWindowMinutes < 1440
+| extend AlertSeverity = "High"

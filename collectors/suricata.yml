@@ -1,0 +1,9 @@
+filebeat.inputs:
+  - type: filestream
+    id: suricata-eve
+    paths: [/var/log/suricata/eve.json]
+    parsers: [ndjson: {overwrite_keys: true, add_error_key: true}]
+processors:
+  - add_fields: {target: suricata, fields: {source: eve.json}}
+output.logstash:
+  hosts: ["logstash.internal:5044"]
