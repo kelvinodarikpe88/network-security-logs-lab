@@ -1,0 +1,14 @@
+# deploy/collector.service - run log collectors as a managed service
+[Unit]
+Description=Cloud SOC Log Collector
+After=network-online.target
+
+[Service]
+User=soc
+WorkingDirectory=/opt/soc
+ExecStart=/usr/bin/python3 /opt/soc/collectors/wap_log_parser.py --watch /var/log/wap
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
