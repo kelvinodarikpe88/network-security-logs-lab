@@ -1,18 +1,29 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "resources": [{
-    "type": "Microsoft.Insights/dataCollectionRules",
-    "apiVersion": "2022-06-01",
-    "name": "dcr-cef-syslog",
-    "location": "eastus",
-    "properties": {
-      "dataSources": {
-        "syslog": [{ "name": "syslog-all", "streams": ["Microsoft-Syslog"], "facilityNames": ["auth","authpriv","daemon","user","local0","local1","local2","local3","local4","local5","local6","local7"], "logLevels": ["Info","Notice","Warning","Error","Critical"] }],
-        "windowsEventLogs": []
-      },
-      "destinations": { "logAnalytics": [{ "workspaceResourceId": "RESOURCE_ID_OF_LAW", "name": "law-soc" }] },
-      "dataFlows": [{ "streams": ["Microsoft-Syslog"], "destinations": ["law-soc"], "transformKql": "source | where ProcessName == 'CEF' | project-rename TimeGenerated = TimeGenerated, Message = SyslogMessage" }]
+  "name": "cef-security-dcr",
+  "description": "Starter Data Collection Rule configuration for CEF security telemetry",
+  "dataSources": {
+    "syslog": {
+      "facilityNames": [
+        "auth",
+        "authpriv",
+        "daemon",
+        "kern",
+        "local0",
+        "local1",
+        "local2",
+        "local3",
+        "local4",
+        "local5",
+        "local6",
+        "local7"
+      ],
+      "logLevels": [
+        "Warning",
+        "Error",
+        "Critical",
+        "Alert",
+        "Emergency"
+      ]
     }
-  }]
+  }
 }
